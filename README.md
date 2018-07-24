@@ -7,9 +7,10 @@ Idea is to implement transaction across kiwi services which is different from Da
 
 This would be transaction coordinator design which would coordinate the transaction between services and if error occur, would rollback
 
-You could simply download the code and make use of the repository
+You could simply clone the repository and walk down the code in **order service**
 
 # Usage
+https://github.com/sbrakl/trasactionmanger/blob/master/orderservice/Controllers/OrderController.cs
 ```csharp
 KiwiTransactionManager ktm = new KiwiTransactionManager(_logger);
 

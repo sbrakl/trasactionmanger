@@ -6,13 +6,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace orderservice.BuilderTransaction
+namespace orderservice.Transaction.BuilderTransaction
 {
-    public class UpdateStockTransactionalClient : IBuilderTransaction
+    public class UpdateStockBTransactionalClient : IBuilderTransaction
     {
         private ILogger<MyLogger> _logger;
 
-        public UpdateStockTransactionalClient(ILogger<MyLogger> logger, string name, Dictionary<string, object> input)
+        public UpdateStockBTransactionalClient(ILogger<MyLogger> logger, string name, Dictionary<string, object> input)
         {
             Name = name;
             this.Input = input;

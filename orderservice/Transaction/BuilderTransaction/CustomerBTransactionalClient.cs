@@ -6,13 +6,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace orderservice.BuilderTransaction
+namespace orderservice.Transaction.BuilderTransaction
 {
-    public class CustomerTransactionalClient : IBuilderTransaction
+    public class CustomerBTransactionalClient : IBuilderTransaction
     {
         private ILogger<MyLogger> _logger;
 
-        public CustomerTransactionalClient(ILogger<MyLogger> logger, string name)
+        public CustomerBTransactionalClient(ILogger<MyLogger> logger, string name)
         {
             Name = name;
             _logger = logger;

@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace orderservice.BuilderTransaction
+namespace orderservice.Transaction.BuilderTransaction
 {
-    public class VoucherTransactionalClient : IBuilderTransaction
+    public class VoucherBTransactionalClient : IBuilderTransaction
     {
         private ILogger<MyLogger> _logger;
 
@@ -17,7 +17,7 @@ namespace orderservice.BuilderTransaction
         public Dictionary<string, object> Output { get; set; }
 
 
-        public VoucherTransactionalClient(ILogger<MyLogger> logger, string name)
+        public VoucherBTransactionalClient(ILogger<MyLogger> logger, string name)
         {
             Name = name;
             _logger = logger;
@@ -25,7 +25,7 @@ namespace orderservice.BuilderTransaction
             Output = new Dictionary<string, object>();
         }
 
-        public VoucherTransactionalClient(ILogger<MyLogger> logger, string name, Dictionary<string, object> inputs)
+        public VoucherBTransactionalClient(ILogger<MyLogger> logger, string name, Dictionary<string, object> inputs)
         {
             Name = name;
             _logger = logger;

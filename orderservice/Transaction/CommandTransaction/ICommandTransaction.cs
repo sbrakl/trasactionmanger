@@ -9,6 +9,6 @@ namespace orderservice.Transaction.CommandTransaction
     {
         string Name { get; set; }         
         Dictionary<string, object> Execute(Dictionary<string, object> Input);
-        void RollBack();
+        Dictionary<string, object> RollBack(Dictionary<string, object> Input);
     }
 }

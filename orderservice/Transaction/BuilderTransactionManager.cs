@@ -5,23 +5,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace orderservice.Transaction
+namespace orderservice.BuilderTransaction
 {
-    public class KiwiTransactionManager
+    /// <summary>
+    /// Transactional Manager based on Builder Pattern
+    /// </summary>
+    public class BuilderTransactionManager
     {
         public List<ITransaction> Transactions { get; set; }
         private ILogger<MyLogger> _logger { get; set; }
 
         private Dictionary<string, object> TransactionLevelOutput { get; set; }
 
-        public KiwiTransactionManager(ILogger<MyLogger> logger)
+        public BuilderTransactionManager(ILogger<MyLogger> logger)
         {
             _logger = logger;
             Transactions = new List<ITransaction>();
             TransactionLevelOutput = new Dictionary<string, object>();
         }
 
-        public KiwiTransactionManager(ILogger<MyLogger> logger, List<ITransaction> transactions)
+        public BuilderTransactionManager(ILogger<MyLogger> logger, List<ITransaction> transactions)
         {
             _logger = logger;
             Transactions = transactions;

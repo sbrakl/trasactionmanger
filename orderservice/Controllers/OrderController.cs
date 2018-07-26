@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using orderservice.Client;
 using orderservice.Logger;
-using orderservice.Transaction;
+using orderservice.BuilderTransaction;
 using System.Collections.Generic;
 
 namespace orderservice.Controllers
@@ -21,7 +21,7 @@ namespace orderservice.Controllers
         [HttpGet]
         public ActionResult<string> ProcessOrder()
         {            
-            KiwiTransactionManager ktm = new KiwiTransactionManager(_logger);
+            BuilderTransactionManager ktm = new BuilderTransactionManager(_logger);
             #region Add TransactionClient
             ktm.AddTraction(new UpdateStockTransactionalClient(_logger,
                                                                 "stock",

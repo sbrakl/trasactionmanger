@@ -47,7 +47,7 @@ namespace customerservice.Controllers
             };
         }
 
-        [Route("rollbackelltotal/{customerId}")]
+        [Route("rollbackselltotal/{customerId}")]
         [HttpGet]
         public ActionResult<CustomerResponse> RollbackCustomerSellTotal(string customerId)
         {

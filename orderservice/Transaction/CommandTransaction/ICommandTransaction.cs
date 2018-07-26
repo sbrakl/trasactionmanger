@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace orderservice.Transaction.CommandTransaction
 {
-    public interface ICommandTransaction
+    public interface ICommandTransaction: IEquatable<ICommandTransaction>
     {
         string Name { get; set; }         
         Dictionary<string, object> Execute(Dictionary<string, object> Input);

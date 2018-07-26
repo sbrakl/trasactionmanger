@@ -8,14 +8,13 @@ using System.Threading.Tasks;
 
 namespace orderservice.Transaction.CommandTransaction
 {
-    public class UpdateWeBuyCTransactionClient : ICommandTransaction
+    public class VoucherCTransactionClient : ICommandTransaction
     {
         private ILogger<MyLogger> _logger;
 
-        public UpdateWeBuyCTransactionClient(ILogger<MyLogger> logger, string name)
+        public VoucherCTransactionClient(ILogger<MyLogger> logger, string Name)
         {
             _logger = logger;
-            Name = name;
         }
 
         public string Name { get; set; }
@@ -28,20 +27,26 @@ namespace orderservice.Transaction.CommandTransaction
         public Dictionary<string, object> Execute(Dictionary<string, object> Input)
         {
             Dictionary<string, object> Output = new Dictionary<string, object>();
-            var res = CustomerClient.UpdateCustomerTotalBuy();
-            Output.Add("CustomerMessage", res.Message);
-            Output.Add("CustomerKey", res.CustomerKey);
-            _logger.LogInformation(res.Message);
+            if (!Input.ContainsKey("Voucher"))
+                throw new ArgumentException("Voucher not passed");
+            if (!Input.ContainsKey("OrderNumber"))
+                throw new ArgumentException("OrderNumber not passed");
+            if (!Input.ContainsKey("CustomerKey"))
+                throw new ArgumentException("CustomerKey not passed");
+            string vchr = (string)Input["Voucher"];
+            string customerkey = (string)Input["CustomerKey"];
+            var msg = VoucherClient.RedeeemVoucher(vchr);
+            Output.Add("VoucherMessage", msg);
+            _logger.LogInformation(msg);
             return Output;
         }
 
         public Dictionary<string, object> RollBack(Dictionary<string, object> Input)
         {
             Dictionary<string, object> Output = new Dictionary<string, object>();
-            var res = CustomerClient.RollbackCustomerTotalBuy();
-            Output.Add("CustomerMessage", res.Message);
-            Output.Add("CustomerKey", res.CustomerKey);
-            _logger.LogInformation(res.Message);
+            string vchr = (string)Input["Voucher"];
+            var msg = VoucherClient.UnRedeeemVoucher(vchr);
+            Output.Add("VoucherMessage", msg);
             return Output;
         }
     }

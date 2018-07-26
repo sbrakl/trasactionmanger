@@ -8,14 +8,13 @@ using System.Threading.Tasks;
 
 namespace orderservice.Transaction.CommandTransaction
 {
-    public class UpdateWeBuyCTransactionClient : ICommandTransaction
+    public class UpdateStockCTransactionClient : ICommandTransaction
     {
         private ILogger<MyLogger> _logger;
 
-        public UpdateWeBuyCTransactionClient(ILogger<MyLogger> logger, string name)
+        public UpdateStockCTransactionClient(ILogger<MyLogger> logger)
         {
             _logger = logger;
-            Name = name;
         }
 
         public string Name { get; set; }
@@ -28,20 +27,30 @@ namespace orderservice.Transaction.CommandTransaction
         public Dictionary<string, object> Execute(Dictionary<string, object> Input)
         {
             Dictionary<string, object> Output = new Dictionary<string, object>();
-            var res = CustomerClient.UpdateCustomerTotalBuy();
-            Output.Add("CustomerMessage", res.Message);
-            Output.Add("CustomerKey", res.CustomerKey);
-            _logger.LogInformation(res.Message);
+            if (!Input.ContainsKey("Quantity"))
+                throw new ArgumentException("Quantity not passed");
+            var quantity = (int)Input["Quantity"];
+            var msg = StockClient.StockUpdate(quantity);
+            Output.Add("StockMessage", msg);            
+            _logger.LogInformation(msg);
             return Output;
         }
 
         public Dictionary<string, object> RollBack(Dictionary<string, object> Input)
         {
             Dictionary<string, object> Output = new Dictionary<string, object>();
-            var res = CustomerClient.RollbackCustomerTotalBuy();
-            Output.Add("CustomerMessage", res.Message);
-            Output.Add("CustomerKey", res.CustomerKey);
-            _logger.LogInformation(res.Message);
+            if (!Input.ContainsKey("Quantity"))
+                throw new ArgumentException("Quantity not passed");
+            var quantity = (int)Input["Quantity"];
+            int rollbackqty = quantity * -1;
+            var msg = StockClient.StockUpdate(rollbackqty);
+
+            if (Output.ContainsKey("StockMessage"))
+                Output["StockMessage"] = msg;
+            else
+                Output.Add("StockMessage", msg);
+
+            _logger.LogInformation(msg);
             return Output;
         }
     }

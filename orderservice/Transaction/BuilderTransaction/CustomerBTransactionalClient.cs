@@ -26,7 +26,7 @@ namespace orderservice.Transaction.BuilderTransaction
 
         public void Execute()
         {            
-            var res = CustomerClient.UpdateCustomerSaleNumbers();
+            var res = CustomerClient.UpdateCustomerTotalBuy();
             Output.Add("CustomerMessage", res.Message);
             Output.Add("CustomerKey", res.CustomerKey);
             _logger.LogInformation(res.Message);            
@@ -34,7 +34,7 @@ namespace orderservice.Transaction.BuilderTransaction
 
         public void RollBack()
         {                     
-            var res = CustomerClient.RollbackUpdateCustomerSaleNumbers();
+            var res = CustomerClient.RollbackCustomerTotalBuy();
             if (Output.ContainsKey("CustomerMessage"))
                 Output["Output"] = res.Message;
             else

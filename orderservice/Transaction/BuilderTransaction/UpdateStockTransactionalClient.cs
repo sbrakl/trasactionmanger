@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace orderservice.BuilderTransaction
 {
-    public class UpdateStockTransactionalClient : ITransaction
+    public class UpdateStockTransactionalClient : IBuilderTransaction
     {
         private ILogger<MyLogger> _logger;
 

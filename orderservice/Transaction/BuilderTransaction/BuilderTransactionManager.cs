@@ -12,7 +12,7 @@ namespace orderservice.BuilderTransaction
     /// </summary>
     public class BuilderTransactionManager
     {
-        public List<ITransaction> Transactions { get; set; }
+        public List<IBuilderTransaction> Transactions { get; set; }
         private ILogger<MyLogger> _logger { get; set; }
 
         private Dictionary<string, object> TransactionLevelOutput { get; set; }
@@ -20,18 +20,18 @@ namespace orderservice.BuilderTransaction
         public BuilderTransactionManager(ILogger<MyLogger> logger)
         {
             _logger = logger;
-            Transactions = new List<ITransaction>();
+            Transactions = new List<IBuilderTransaction>();
             TransactionLevelOutput = new Dictionary<string, object>();
         }
 
-        public BuilderTransactionManager(ILogger<MyLogger> logger, List<ITransaction> transactions)
+        public BuilderTransactionManager(ILogger<MyLogger> logger, List<IBuilderTransaction> transactions)
         {
             _logger = logger;
             Transactions = transactions;
             TransactionLevelOutput = new Dictionary<string, object>();
         }
 
-        public void AddTraction(ITransaction trac)
+        public void AddTraction(IBuilderTransaction trac)
         {
             Transactions.Add(trac);
         }
@@ -43,7 +43,7 @@ namespace orderservice.BuilderTransaction
             bool isRollbackOccur = false;
             for (index = 0; index < Transactions.Count; index++)
             {
-                ITransaction trac = Transactions[index];
+                IBuilderTransaction trac = Transactions[index];
                 string processname = trac.Name;
                 _logger.LogInformation("{0} transaction executing", processname);
                 try
@@ -70,7 +70,7 @@ namespace orderservice.BuilderTransaction
         {
             for (int index = Index; index >= 0; index--)
             {
-                ITransaction trac = Transactions[index];
+                IBuilderTransaction trac = Transactions[index];
                 string processname = trac.GetType().Name;
                 _logger.LogInformation("{0} transaction rollback executing", processname);
                 try
@@ -88,7 +88,7 @@ namespace orderservice.BuilderTransaction
             }
         }
 
-        private void AddTransactionLevelOutputToInput(ITransaction trac)
+        private void AddTransactionLevelOutputToInput(IBuilderTransaction trac)
         {
             var tracInput = trac.Input;
             if (tracInput == null)
@@ -102,7 +102,7 @@ namespace orderservice.BuilderTransaction
             }
         }
 
-        private void AddOutputToTransactionLevelOutput(ITransaction trac)
+        private void AddOutputToTransactionLevelOutput(IBuilderTransaction trac)
         {
             var tracOutput = trac.Output;
             foreach (KeyValuePair<string, object> kv in tracOutput)

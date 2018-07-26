@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace orderservice.BuilderTransaction
 {
-    public interface ITransaction
+    public interface IBuilderTransaction
     {
         string Name { get; set; }
         Dictionary<string, object> Input { get; set; }

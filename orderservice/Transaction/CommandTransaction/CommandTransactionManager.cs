@@ -60,7 +60,10 @@ namespace orderservice.Transaction.CommandTransaction
 
         private void ExecuteRollBack(ICommandTransaction client)
         {
-            _logger.LogWarning("Executing Rollback");
+            _logger.LogWarning("Executing Implicit rollback");
+            if (IsTransactionFailed)
+                throw new InconsistantStateException("Transactional Manager in error state, It would be previously Rollback have been executed. Check logs for more detail");
+
             IsTransactionFailed = true;
             int Index = Transactions.IndexOf(client) - 1;
 
@@ -75,6 +78,34 @@ namespace orderservice.Transaction.CommandTransaction
                     trac.RollBack(Inputs);
                 }
                 catch(Exception ex)
+                {
+                    _logger.LogError("Rollback failed for process {0}", processname);
+                    _logger.LogError("Transaction in inconsistant state, manual check required");
+                    throw new RollbackFailedException("Rollbacked filed for transaction " + processname, ex);
+                }
+            }
+        }
+
+        public void RollBack()
+        {
+            _logger.LogWarning("Executing Explicit rollback");
+            if (IsTransactionFailed)
+                throw new InconsistantStateException("Transactional Manager in error state, It would be previously Rollback have been executed. Check logs for more detail");
+
+            IsTransactionFailed = true;
+            int TransCount = Transactions.Count - 1;
+
+            for (int index = TransCount; index >= 0; index--)
+            {
+                ICommandTransaction trac = Transactions[index];
+                Dictionary<string, object> Inputs = TransactionInputs[trac];
+                string processname = trac.GetType().Name;
+                _logger.LogInformation("{0} transaction rollback executing", processname);
+                try
+                {
+                    trac.RollBack(Inputs);
+                }
+                catch (Exception ex)
                 {
                     _logger.LogError("Rollback failed for process {0}", processname);
                     _logger.LogError("Transaction in inconsistant state, manual check required");

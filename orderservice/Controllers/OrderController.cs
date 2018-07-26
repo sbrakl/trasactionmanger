@@ -82,12 +82,19 @@ namespace orderservice.Controllers
                 }
 
 
-                //Do some non tractional service call stuff        
-                if (customeroutput != null && !(customeroutput.ContainsKey("CustomerKey")))
+                //Do some non tractional service call stuff                       
+                _logger.LogInformation("Non Tractional Call");
+                try
                 {
-                    _logger.LogInformation("Non Tractional Call");
-                    DummyRepo.UpdateOrder();
+                    DummyRepo.UpdateOrder(true);
                 }
+                catch (Exception ex)
+                {
+                    //Exception in non transaction part, will throw RepositoryException exception
+                    //We method try catch block for handing
+                    throw;
+                }
+                
 
                 //Back again transactional stuff
                 VoucherCTransactionClient voucherRedeemClient
@@ -116,6 +123,13 @@ namespace orderservice.Controllers
             catch (RollbackFailedException rlbckEx)
             {
                 return "Order processing failed, system in incosistant state";
+            }
+            catch (RepositoryException repoEx)
+            {
+                //Since there is exception in the non transactional part
+                //I need to maually call RollBack();
+                ctm.RollBack();
+                return "Order processing failed, but rollback were successful";
             }
             catch (Exception ex)
             {

@@ -8,7 +8,7 @@ namespace orderservice.Client
         public static CustomerResponse UpdateCustomerSaleNumbers()
         {
             var customerclient = new RestClient("http://localhost:5002");
-            var customerrequest = new RestRequest("customer/updatecustomer/5", Method.GET);
+            var customerrequest = new RestRequest("customer/updatebuytotal/5", Method.GET);
             customerclient.Timeout = 2000;
             IRestResponse response = customerclient.Execute(customerrequest);
             if (response.StatusCode != System.Net.HttpStatusCode.OK)
@@ -24,7 +24,7 @@ namespace orderservice.Client
         public static CustomerResponse RollbackUpdateCustomerSaleNumbers()
         {
             var customerclient = new RestClient("http://localhost:5002");
-            var customerrequest = new RestRequest("customer/updatecustomer/5", Method.GET);
+            var customerrequest = new RestRequest("customer/rollbackbuytotal/5", Method.GET);
             customerclient.Timeout = 2000;
             IRestResponse response = customerclient.Execute(customerrequest);
             if (response.StatusCode != System.Net.HttpStatusCode.OK)

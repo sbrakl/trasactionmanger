@@ -22,12 +22,12 @@ namespace orderservice.Transaction.CommandTransaction
             IsTransactionFailed = false;
         }
 
-        public Dictionary<string,object> ExecuteInTransaction(ICommandTransaction client, 
-                                                              Dictionary<string, object> Input, 
+        public Dictionary<string, object> ExecuteInTransaction(ICommandTransaction client,
+                                                              Dictionary<string, object> Input,
                                                               string name = "")
         {
             if (IsTransactionFailed)
-                throw new ArgumentException("Transactional Manager in error state, create new instance to use it");
+                throw new InconsistantStateException("Transactional Manager in error state, create a new instance to use it");
 
 
             if (String.IsNullOrEmpty(client.Name) && string.IsNullOrEmpty(name))
@@ -37,7 +37,7 @@ namespace orderservice.Transaction.CommandTransaction
 
             #region Adding client to Dictionary
             if (!Transactions.Contains(client))
-            { 
+            {
                 Transactions.Add(client);
                 TransactionInputs.Add(client, Input);
             }
@@ -54,7 +54,7 @@ namespace orderservice.Transaction.CommandTransaction
                 _logger.LogError("Exception occur while executing  client '{0}' in transaction", client.Name);
                 _logger.LogError(ex.ToString());
                 ExecuteRollBack(client);
-                return new Dictionary<string, object> { { "Msg", "Error in Transaction" } };
+                throw new TransactionExecutionException("Transaction failed and rollback executed successfully");
             }
         }
 
@@ -71,16 +71,76 @@ namespace orderservice.Transaction.CommandTransaction
                 string processname = trac.GetType().Name;
                 _logger.LogInformation("{0} transaction rollback executing", processname);
                 try
-                {                    
+                {
                     trac.RollBack(Inputs);
                 }
-                catch
+                catch(Exception ex)
                 {
                     _logger.LogError("Rollback failed for process {0}", processname);
                     _logger.LogError("Transaction in inconsistant state, manual check required");
-                    throw;
+                    throw new RollbackFailedException("Rollbacked filed for transaction " + processname, ex);
                 }
             }
         }
+    }
+
+    public class RollbackFailedException : Exception
+    {
+        public RollbackFailedException(): base()
+        {
+
+        }
+
+        public RollbackFailedException(string msg) : base(msg)
+        {
+
+        }
+
+        public RollbackFailedException(string msg, Exception ex): base(msg, ex)
+        {
+
+        }
+       
+        public string TransactionClientName { get; set; }
+    }
+
+    public class InconsistantStateException : Exception
+    {
+        public InconsistantStateException() : base()
+        {
+
+        }
+
+        public InconsistantStateException(string msg) : base(msg)
+        {
+
+        }
+
+        public InconsistantStateException(string msg, Exception ex) : base(msg, ex)
+        {
+
+        }
+
+        public string TransactionClientName { get; set; }
+    }
+
+    public class TransactionExecutionException : Exception
+    {
+        public TransactionExecutionException() : base()
+        {
+
+        }
+
+        public TransactionExecutionException(string msg) : base(msg)
+        {
+
+        }
+
+        public TransactionExecutionException(string msg, Exception ex) : base(msg, ex)
+        {
+
+        }
+
+        public string TransactionClientName { get; set; }
     }
 }
